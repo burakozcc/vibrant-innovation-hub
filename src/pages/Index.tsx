@@ -1,5 +1,6 @@
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
+import { WhyPartner } from "@/components/WhyPartner";
 import { ContactForm } from "@/components/ContactForm";
 
 const Index = () => {
@@ -7,6 +8,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Hero />
       <About />
+      <WhyPartner />
       <ContactForm />
       <footer className="bg-white py-8">
         <div className="container mx-auto px-4 text-center">
