@@ -1,12 +1,23 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { Hero } from "@/components/Hero";
+import { About } from "@/components/About";
+import { ContactForm } from "@/components/ContactForm";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Hero />
+      <About />
+      <ContactForm />
+      <footer className="bg-white py-8">
+        <div className="container mx-auto px-4 text-center">
+          <p className="font-roboto text-text-secondary">
+            © 2025 Startovate. Transforming Ideas into Impact.
+          </p>
+          <p className="font-roboto text-text-secondary mt-2">
+            contact@startovate.com
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };
