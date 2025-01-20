@@ -16,7 +16,7 @@ const Index = () => {
             © 2025 Startovate. Transforming Ideas into Impact.
           </p>
           <p className="font-roboto text-text-secondary mt-2">
-            contact@startovate.com
+            contact@startovate.com.tr
           </p>
         </div>
       </footer>
