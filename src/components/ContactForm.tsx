@@ -2,16 +2,89 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const ContactForm = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    startupName: "",
+    industry: "",
+    ideaSummary: "",
+    email: "",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Submission Received",
-      description: "Thank you for your interest. We'll review your submission and get back to you soon.",
-    });
+    setIsSubmitting(true);
+
+    try {
+      const form = e.target as HTMLFormElement;
+      const fileInput = form.querySelector('input[type="file"]') as HTMLInputElement;
+      const file = fileInput.files?.[0];
+      let pitchDeckUrl = null;
+
+      if (file) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${crypto.randomUUID()}.${fileExt}`;
+        
+        const { error: uploadError, data } = await supabase.storage
+          .from('pitch_decks')
+          .upload(fileName, file);
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('pitch_decks')
+          .getPublicUrl(fileName);
+
+        pitchDeckUrl = publicUrl;
+      }
+
+      const { error: submissionError } = await supabase
+        .from('startup_submissions')
+        .insert({
+          startup_name: formData.startupName,
+          industry: formData.industry,
+          idea_summary: formData.ideaSummary,
+          email: formData.email,
+          pitch_deck_url: pitchDeckUrl,
+        });
+
+      if (submissionError) throw submissionError;
+
+      toast({
+        title: "Submission Successful",
+        description: "Thank you for your interest. We'll review your submission and get back to you soon.",
+      });
+
+      // Reset form
+      setFormData({
+        startupName: "",
+        industry: "",
+        ideaSummary: "",
+        email: "",
+      });
+      form.reset();
+
+    } catch (error) {
+      console.error('Submission error:', error);
+      toast({
+        title: "Submission Failed",
+        description: "There was an error submitting your pitch. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -26,26 +99,65 @@ export const ContactForm = () => {
           </p>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Input placeholder="Startup Name" className="w-full" required />
+              <Input
+                name="startupName"
+                placeholder="Startup Name"
+                value={formData.startupName}
+                onChange={handleInputChange}
+                className="w-full"
+                required
+              />
             </div>
             <div>
-              <Input placeholder="Industry" className="w-full" required />
+              <Input
+                name="industry"
+                placeholder="Industry"
+                value={formData.industry}
+                onChange={handleInputChange}
+                className="w-full"
+                required
+              />
             </div>
             <div>
-              <Textarea placeholder="Idea Summary" className="w-full min-h-[150px]" required />
+              <Textarea
+                name="ideaSummary"
+                placeholder="Idea Summary"
+                value={formData.ideaSummary}
+                onChange={handleInputChange}
+                className="w-full min-h-[150px]"
+                required
+              />
             </div>
             <div>
-              <Input type="email" placeholder="Email Address" className="w-full" required />
+              <Input
+                name="email"
+                type="email"
+                placeholder="Email Address"
+                value={formData.email}
+                onChange={handleInputChange}
+                className="w-full"
+                required
+              />
             </div>
             <div>
-              <Input type="file" accept=".pdf,.doc,.docx" className="w-full" />
-              <p className="text-sm text-text-secondary mt-2">Optional: Upload your pitch deck (PDF, DOC, DOCX)</p>
+              <Input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="w-full"
+              />
+              <p className="text-sm text-text-secondary mt-2">
+                Optional: Upload your pitch deck (PDF, DOC, DOCX)
+              </p>
             </div>
             <p className="text-sm text-text-secondary">
               Your submission will be handled with complete confidentiality.
             </p>
-            <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-              Submit Pitch
+            <Button
+              type="submit"
+              className="w-full bg-primary hover:bg-primary/90"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit Pitch"}
             </Button>
           </form>
         </div>
