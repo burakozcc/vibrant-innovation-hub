@@ -173,9 +173,8 @@ export const ContactForm = () => {
             </p>
             <Button
               type="submit"
-              className={`w-full bg-primary hover:bg-[#1BAE87] transition-all duration-300
-                        hover:shadow-lg shadow-md ${formData.startupName && formData.industry && 
-                        formData.ideaSummary && formData.email ? 'animate-pulse' : ''}`}
+              className="w-full bg-primary hover:bg-[#1BAE87] transition-all duration-300
+                        hover:shadow-lg shadow-md"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Submitting..." : "Submit Pitch"}
