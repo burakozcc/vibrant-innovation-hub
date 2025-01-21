@@ -35,15 +35,16 @@ const SubmissionConfirmation = () => {
           filter: `id=eq.${submissionId}`,
         },
         (payload: RealtimePostgresChangesPayload<SubmissionRow>) => {
-          const newStatus = payload.new?.status;
-          if (
-            newStatus &&
-            (newStatus === "submitted" ||
+          if (payload.new && typeof payload.new.status === 'string') {
+            const newStatus = payload.new.status;
+            if (
+              newStatus === "submitted" ||
               newStatus === "under_review" ||
               newStatus === "accepted" ||
-              newStatus === "declined")
-          ) {
-            setStatus(newStatus as LocationState["status"]);
+              newStatus === "declined"
+            ) {
+              setStatus(newStatus as LocationState["status"]);
+            }
           }
         }
       )
