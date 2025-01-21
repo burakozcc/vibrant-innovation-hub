@@ -3,11 +3,14 @@ import { useLocation, Navigate, useNavigate } from "react-router-dom";
 import { ProgressTracker } from "@/components/ProgressTracker";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Database } from "@/integrations/supabase/types";
 
 interface LocationState {
   submissionId: string;
   status: "submitted" | "under_review" | "accepted" | "declined";
 }
+
+type SubmissionRow = Database["public"]["Tables"]["startup_submissions"]["Row"];
 
 const SubmissionConfirmation = () => {
   const location = useLocation();
@@ -30,7 +33,7 @@ const SubmissionConfirmation = () => {
           table: "startup_submissions",
           filter: `id=eq.${submissionId}`,
         },
-        (payload) => {
+        (payload: { new: SubmissionRow }) => {
           if (payload.new && payload.new.status) {
             setStatus(payload.new.status as LocationState["status"]);
           }
