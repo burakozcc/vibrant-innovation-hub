@@ -4,6 +4,7 @@ import { ProgressTracker } from "@/components/ProgressTracker";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Database } from "@/integrations/supabase/types";
+import { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
 
 interface LocationState {
   submissionId: string;
@@ -25,15 +26,15 @@ const SubmissionConfirmation = () => {
 
     const channel = supabase
       .channel("submission_updates")
-      .on(
-        "postgres_changes",
+      .on<SubmissionRow>(
+        'postgres_changes',
         {
           event: "*",
           schema: "public",
           table: "startup_submissions",
           filter: `id=eq.${submissionId}`,
         },
-        (payload: { new: SubmissionRow }) => {
+        (payload: RealtimePostgresChangesPayload<SubmissionRow>) => {
           if (payload.new && payload.new.status) {
             setStatus(payload.new.status as LocationState["status"]);
           }
