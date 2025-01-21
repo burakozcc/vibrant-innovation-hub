@@ -41,7 +41,8 @@ export const ContactForm = () => {
           .upload(fileName, file);
 
         if (uploadError) {
-          throw uploadError;
+          console.error('File upload error:', uploadError);
+          throw new Error(`File upload failed: ${uploadError.message}`);
         }
 
         const { data: { publicUrl } } = supabase.storage
@@ -64,7 +65,10 @@ export const ContactForm = () => {
         .select()
         .single();
 
-      if (submissionError) throw submissionError;
+      if (submissionError) {
+        console.error('Submission error:', submissionError);
+        throw new Error(`Submission failed: ${submissionError.message}`);
+      }
 
       // Reset form
       setFormData({
@@ -84,10 +88,10 @@ export const ContactForm = () => {
       });
 
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error('Detailed submission error:', error);
       toast({
         title: "Submission Failed",
-        description: "There was an error submitting your pitch. Please try again.",
+        description: error instanceof Error ? error.message : "There was an error submitting your pitch. Please try again.",
         variant: "destructive",
       });
     } finally {
