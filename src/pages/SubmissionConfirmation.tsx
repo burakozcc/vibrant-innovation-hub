@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
-import { useLocation, Navigate } from "react-router-dom";
+import { useLocation, Navigate, useNavigate } from "react-router-dom";
 import { ProgressTracker } from "@/components/ProgressTracker";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+
+interface LocationState {
+  submissionId: string;
+  status: "submitted" | "under_review" | "accepted" | "declined";
+}
 
 const SubmissionConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [status, setStatus] = useState(location.state?.status || "submitted");
-  const submissionId = location.state?.submissionId;
+  const [status, setStatus] = useState<LocationState["status"]>(
+    (location.state as LocationState)?.status || "submitted"
+  );
+  const submissionId = (location.state as LocationState)?.submissionId;
 
   useEffect(() => {
     if (!submissionId) return;
@@ -26,7 +32,7 @@ const SubmissionConfirmation = () => {
         },
         (payload) => {
           if (payload.new && payload.new.status) {
-            setStatus(payload.new.status);
+            setStatus(payload.new.status as LocationState["status"]);
           }
         }
       )
