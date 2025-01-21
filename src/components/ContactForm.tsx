@@ -4,9 +4,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 
 export const ContactForm = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     startupName: "",
@@ -49,7 +51,7 @@ export const ContactForm = () => {
         pitchDeckUrl = publicUrl;
       }
 
-      const { error: submissionError } = await supabase
+      const { error: submissionError, data: submissionData } = await supabase
         .from('startup_submissions')
         .insert({
           startup_name: formData.startupName,
@@ -57,14 +59,12 @@ export const ContactForm = () => {
           idea_summary: formData.ideaSummary,
           email: formData.email,
           pitch_deck_url: pitchDeckUrl,
-        });
+          status: 'submitted'
+        })
+        .select()
+        .single();
 
       if (submissionError) throw submissionError;
-
-      toast({
-        title: "Submission Successful",
-        description: "Thank you for your interest. We'll review your submission and get back to you soon.",
-      });
 
       // Reset form
       setFormData({
@@ -74,6 +74,14 @@ export const ContactForm = () => {
         email: "",
       });
       form.reset();
+
+      // Navigate to confirmation page
+      navigate('/submission-confirmation', {
+        state: {
+          submissionId: submissionData.id,
+          status: submissionData.status
+        }
+      });
 
     } catch (error) {
       console.error('Submission error:', error);

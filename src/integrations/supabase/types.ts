@@ -18,6 +18,7 @@ export type Database = {
           industry: string
           pitch_deck_url: string | null
           startup_name: string
+          status: string
         }
         Insert: {
           created_at?: string
@@ -27,6 +28,7 @@ export type Database = {
           industry: string
           pitch_deck_url?: string | null
           startup_name: string
+          status?: string
         }
         Update: {
           created_at?: string
@@ -36,6 +38,7 @@ export type Database = {
           industry?: string
           pitch_deck_url?: string | null
           startup_name?: string
+          status?: string
         }
         Relationships: []
       }
