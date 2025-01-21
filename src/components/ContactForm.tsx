@@ -104,7 +104,8 @@ export const ContactForm = () => {
                 placeholder="Startup Name"
                 value={formData.startupName}
                 onChange={handleInputChange}
-                className="w-full"
+                className="w-full transition-all duration-300 focus:border-[#20C997] focus:ring-[#20C997]/20
+                          hover:border-[#20C997]/50"
                 required
               />
             </div>
@@ -114,7 +115,8 @@ export const ContactForm = () => {
                 placeholder="Industry"
                 value={formData.industry}
                 onChange={handleInputChange}
-                className="w-full"
+                className="w-full transition-all duration-300 focus:border-[#20C997] focus:ring-[#20C997]/20
+                          hover:border-[#20C997]/50"
                 required
               />
             </div>
@@ -124,7 +126,8 @@ export const ContactForm = () => {
                 placeholder="Idea Summary"
                 value={formData.ideaSummary}
                 onChange={handleInputChange}
-                className="w-full min-h-[150px]"
+                className="w-full min-h-[150px] transition-all duration-300 focus:border-[#20C997] 
+                          focus:ring-[#20C997]/20 hover:border-[#20C997]/50"
                 required
               />
             </div>
@@ -135,7 +138,8 @@ export const ContactForm = () => {
                 placeholder="Email Address"
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full"
+                className="w-full transition-all duration-300 focus:border-[#20C997] focus:ring-[#20C997]/20
+                          hover:border-[#20C997]/50"
                 required
               />
             </div>
@@ -143,7 +147,10 @@ export const ContactForm = () => {
               <Input
                 type="file"
                 accept=".pdf,.doc,.docx"
-                className="w-full"
+                className="w-full transition-all duration-300 focus:border-[#20C997] focus:ring-[#20C997]/20
+                          hover:border-[#20C997]/50 file:mr-4 file:py-2 file:px-4 file:border-0
+                          file:text-sm file:font-semibold file:bg-primary file:text-white
+                          hover:file:bg-[#1BAE87]"
               />
               <p className="text-sm text-text-secondary mt-2">
                 Optional: Upload your pitch deck (PDF, DOC, DOCX)
@@ -154,7 +161,9 @@ export const ContactForm = () => {
             </p>
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary/90"
+              className={`w-full bg-primary hover:bg-[#1BAE87] transition-all duration-300
+                        hover:shadow-lg shadow-md ${formData.startupName && formData.industry && 
+                        formData.ideaSummary && formData.email ? 'animate-pulse' : ''}`}
               disabled={isSubmitting}
             >
               {isSubmitting ? "Submitting..." : "Submit Pitch"}
