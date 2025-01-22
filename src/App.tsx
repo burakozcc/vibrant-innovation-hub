@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import SubmissionConfirmation from "./pages/SubmissionConfirmation";
+import TrackSubmission from "./pages/TrackSubmission";
 
 const queryClient = new QueryClient();
 
@@ -17,6 +18,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/submission-confirmation" element={<SubmissionConfirmation />} />
+          <Route path="/track-submission" element={<TrackSubmission />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

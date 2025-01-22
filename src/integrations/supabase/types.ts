@@ -42,6 +42,44 @@ export type Database = {
         }
         Relationships: []
       }
+      submission_verification_codes: {
+        Row: {
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          submission_id: string
+          used: boolean
+          verification_code: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          submission_id: string
+          used?: boolean
+          verification_code: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          submission_id?: string
+          used?: boolean
+          verification_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "submission_verification_codes_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "startup_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
