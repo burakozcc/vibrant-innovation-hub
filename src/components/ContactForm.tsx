@@ -2,11 +2,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 
-export const ContactForm = () => {
+interface ContactFormProps {
+  initialData?: any;
+  isUpdateMode?: boolean;
+  submissionId?: string;
+}
+
+export const ContactForm = ({ initialData, isUpdateMode, submissionId }: ContactFormProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -16,6 +22,17 @@ export const ContactForm = () => {
     ideaSummary: "",
     email: "",
   });
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        startupName: initialData.startup_name || "",
+        industry: initialData.industry || "",
+        ideaSummary: initialData.idea_summary || "",
+        email: initialData.email || "",
+      });
+    }
+  }, [initialData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -29,8 +46,8 @@ export const ContactForm = () => {
     try {
       const form = e.target as HTMLFormElement;
       const fileInput = form.querySelector('input[type="file"]') as HTMLInputElement;
-      const file = fileInput.files?.[0];
-      let pitchDeckUrl = null;
+      const file = fileInput?.files?.[0];
+      let pitchDeckUrl = initialData?.pitch_deck_url || null;
 
       if (file) {
         const fileExt = file.name.split('.').pop();
@@ -52,41 +69,63 @@ export const ContactForm = () => {
         pitchDeckUrl = publicUrl;
       }
 
-      const { error: submissionError, data: submissionData } = await supabase
-        .from('startup_submissions')
-        .insert({
-          startup_name: formData.startupName,
-          industry: formData.industry,
-          idea_summary: formData.ideaSummary,
-          email: formData.email,
-          pitch_deck_url: pitchDeckUrl,
-          status: 'submitted'
-        })
-        .select()
-        .single();
+      if (isUpdateMode && submissionId) {
+        const { error: updateError } = await supabase
+          .from('startup_submissions')
+          .update({
+            startup_name: formData.startupName,
+            industry: formData.industry,
+            idea_summary: formData.ideaSummary,
+            email: formData.email,
+            pitch_deck_url: pitchDeckUrl,
+          })
+          .eq('id', submissionId);
 
-      if (submissionError) {
-        console.error('Submission error:', submissionError);
-        throw new Error(`Submission failed: ${submissionError.message}`);
+        if (updateError) throw updateError;
+
+        toast({
+          title: "Success",
+          description: "Your submission has been updated successfully.",
+        });
+
+        navigate('/submission-confirmation', {
+          state: {
+            submissionId,
+            status: 'submitted',
+            verified: true
+          }
+        });
+      } else {
+        const { error: submissionError, data: submissionData } = await supabase
+          .from('startup_submissions')
+          .insert({
+            startup_name: formData.startupName,
+            industry: formData.industry,
+            idea_summary: formData.ideaSummary,
+            email: formData.email,
+            pitch_deck_url: pitchDeckUrl,
+            status: 'submitted'
+          })
+          .select()
+          .single();
+
+        if (submissionError) throw submissionError;
+
+        setFormData({
+          startupName: "",
+          industry: "",
+          ideaSummary: "",
+          email: "",
+        });
+        form.reset();
+
+        navigate('/submission-confirmation', {
+          state: {
+            submissionId: submissionData.id,
+            status: submissionData.status
+          }
+        });
       }
-
-      // Reset form
-      setFormData({
-        startupName: "",
-        industry: "",
-        ideaSummary: "",
-        email: "",
-      });
-      form.reset();
-
-      // Navigate to confirmation page
-      navigate('/submission-confirmation', {
-        state: {
-          submissionId: submissionData.id,
-          status: submissionData.status
-        }
-      });
-
     } catch (error) {
       console.error('Detailed submission error:', error);
       toast({
@@ -104,10 +143,12 @@ export const ContactForm = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-poppins font-bold text-center text-text-primary mb-4">
-            Submit Your Startup Pitch
+            {isUpdateMode ? "Update Your Startup Pitch" : "Submit Your Startup Pitch"}
           </h2>
           <p className="text-center text-text-secondary mb-8">
-            Tell us about your idea, and let's explore how Startovate can help you grow.
+            {isUpdateMode 
+              ? "Update your pitch details below"
+              : "Tell us about your idea, and let's explore how Startovate can help you grow."}
           </p>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -177,7 +218,9 @@ export const ContactForm = () => {
                         hover:shadow-lg shadow-md"
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : "Submit Pitch"}
+              {isSubmitting 
+                ? (isUpdateMode ? "Updating..." : "Submitting...") 
+                : (isUpdateMode ? "Update Pitch" : "Submit Pitch")}
             </Button>
           </form>
         </div>

@@ -74,10 +74,10 @@ const SubmissionConfirmation = () => {
       return;
     }
     
-    navigate("/", { 
+    navigate("/update-submission", { 
       state: { 
-        updateMode: true, 
-        submissionId: submissionId 
+        submissionId,
+        verified: true
       } 
     });
   };
