@@ -182,7 +182,7 @@ const TrackSubmission = () => {
                     render={({ slots }) => (
                       <InputOTPGroup className="gap-2">
                         {slots.map((slot, idx) => (
-                          <InputOTPSlot key={idx} {...slot} />
+                          <InputOTPSlot key={idx} {...slot} index={idx} />
                         ))}
                       </InputOTPGroup>
                     )}
