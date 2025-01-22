@@ -46,11 +46,16 @@ const TrackSubmission = () => {
 
       if (otpError) throw otpError;
 
-      // TODO: Send email with OTP using edge function
-      // For now, we'll show it in a toast for testing
+      // Send verification email
+      const { error: emailError } = await supabase.functions.invoke("send-verification-email", {
+        body: { email, verificationCode },
+      });
+
+      if (emailError) throw emailError;
+
       toast({
         title: "Verification Code Sent",
-        description: `Your verification code is: ${verificationCode}`,
+        description: "Please check your email for the verification code.",
       });
 
       setStep("otp");
