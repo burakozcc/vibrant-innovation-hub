@@ -20,12 +20,20 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, verificationCode }: EmailRequest = await req.json();
-    
     if (!RESEND_API_KEY) {
-      throw new Error("Missing RESEND_API_KEY");
+      console.error("Missing RESEND_API_KEY");
+      throw new Error("Server configuration error");
     }
 
+    const { email, verificationCode }: EmailRequest = await req.json();
+    
+    if (!email || !verificationCode) {
+      console.error("Missing required fields:", { email, verificationCode });
+      throw new Error("Missing required fields");
+    }
+
+    console.log("Sending verification email to:", email);
+    
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
@@ -50,23 +58,28 @@ const handler = async (req: Request): Promise<Response> => {
       }),
     });
 
+    const data = await res.json();
+    
     if (!res.ok) {
-      const error = await res.text();
-      throw new Error(`Failed to send email: ${error}`);
+      console.error("Resend API error:", data);
+      throw new Error(data.message || "Failed to send email");
     }
 
-    const data = await res.json();
+    console.log("Email sent successfully:", data);
+
     return new Response(JSON.stringify(data), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    console.error("Error sending verification email:", error);
+    console.error("Error in send-verification-email function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : "An unexpected error occurred" 
+      }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
+        status: 400,
       }
     );
   }
