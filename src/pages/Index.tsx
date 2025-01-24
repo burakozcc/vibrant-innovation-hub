@@ -2,12 +2,14 @@ import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
 import { WhyPartner } from "@/components/WhyPartner";
 import { ContactForm } from "@/components/ContactForm";
+import { ApplicationProcess } from "@/components/ApplicationProcess";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <Hero />
       <About />
+      <ApplicationProcess />
       <WhyPartner />
       <ContactForm />
       <footer className="bg-white py-8">
