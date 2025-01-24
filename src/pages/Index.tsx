@@ -9,8 +9,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Hero />
       <About />
-      <ApplicationProcess />
       <WhyPartner />
+      <ApplicationProcess />
       <ContactForm />
       <footer className="bg-white py-8">
         <div className="container mx-auto px-4 text-center">
