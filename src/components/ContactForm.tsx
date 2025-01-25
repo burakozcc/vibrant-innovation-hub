@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { Upload } from "lucide-react";
 
 interface ContactFormProps {
   initialData?: any;
@@ -16,6 +17,7 @@ export const ContactForm = ({ initialData, isUpdateMode, submissionId }: Contact
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFileName, setSelectedFileName] = useState<string>("");
   const [formData, setFormData] = useState({
     startupName: "",
     industry: "",
@@ -37,6 +39,15 @@ export const ContactForm = ({ initialData, isUpdateMode, submissionId }: Contact
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFileName(file.name);
+    } else {
+      setSelectedFileName("");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -196,16 +207,29 @@ export const ContactForm = ({ initialData, isUpdateMode, submissionId }: Contact
                 required
               />
             </div>
-            <div>
-              <Input
-                type="file"
-                accept=".pdf,.doc,.docx"
-                className="w-full transition-all duration-300 focus:border-[#20C997] focus:ring-[#20C997]/20
-                          hover:border-[#20C997]/50 file:mr-4 file:py-2 file:px-4 file:border-0
-                          file:text-sm file:font-semibold file:bg-primary file:text-white
-                          hover:file:bg-[#1BAE87]"
-              />
-              <p className="text-sm text-text-secondary mt-2">
+            <div className="space-y-2">
+              <div className="flex items-center gap-4">
+                <label 
+                  className="relative inline-flex items-center px-4 py-2 bg-primary hover:bg-[#1BAE87] 
+                            text-white rounded-lg cursor-pointer transition-all duration-300 
+                            hover:shadow-lg shadow-md h-10"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Dosya Seç
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleFileChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                </label>
+                {selectedFileName && (
+                  <span className="text-sm text-text-secondary truncate">
+                    {selectedFileName}
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-text-secondary">
                 Optional: Upload your pitch deck (PDF, DOC, DOCX)
               </p>
             </div>
