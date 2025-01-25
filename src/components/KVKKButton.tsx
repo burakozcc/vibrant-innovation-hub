@@ -1,4 +1,4 @@
-import { Shield } from "lucide-react";
+import { Shield, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -25,8 +25,16 @@ export const KVKKButton = () => {
             Access KVKK Compliance Form
           </Button>
         </TooltipTrigger>
-        <TooltipContent className="max-w-[300px] text-center p-3">
-          <p>Click here to view our compliance with the Law on Protection of Personal Data (KVKK)</p>
+        <TooltipContent 
+          className="max-w-[350px] bg-white/95 backdrop-blur-sm rounded-lg shadow-lg p-4 text-gray-800 animate-fade-in"
+          sideOffset={8}
+        >
+          <div className="flex items-start space-x-3">
+            <FileText className="h-5 w-5 text-[#20C997] flex-shrink-0 mt-0.5" />
+            <p className="text-sm leading-relaxed">
+              Learn how we protect your personal data in compliance with the Law on Protection of Personal Data (KVKK). Click to view and complete the form.
+            </p>
+          </div>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
