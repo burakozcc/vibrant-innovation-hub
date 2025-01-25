@@ -3,7 +3,7 @@ import { About } from "@/components/About";
 import { WhyPartner } from "@/components/WhyPartner";
 import { ContactForm } from "@/components/ContactForm";
 import { ApplicationProcess } from "@/components/ApplicationProcess";
-import { GeneralInquiryForm } from "@/components/GeneralInquiryForm";
+import { MultiStepContactForm } from "@/components/MultiStepContactForm";
 
 const Index = () => {
   return (
@@ -13,7 +13,7 @@ const Index = () => {
       <WhyPartner />
       <ApplicationProcess />
       <ContactForm />
-      <GeneralInquiryForm />
+      <MultiStepContactForm />
       <footer className="bg-white py-8">
         <div className="container mx-auto px-4 text-center">
           <p className="font-roboto text-text-secondary">
