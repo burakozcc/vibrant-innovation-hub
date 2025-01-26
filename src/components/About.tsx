@@ -31,11 +31,6 @@ export const About = () => {
     threshold: 0.1,
   });
 
-  const scrollToContact = () => {
-    const contactSection = document.querySelector('#contact');
-    contactSection?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   return (
     <section className="py-20 bg-white" ref={ref}>
       <div className="container mx-auto px-4">
@@ -70,16 +65,9 @@ export const About = () => {
           <h3 className="text-2xl font-poppins font-semibold mb-4 text-text-primary">
             What I'm Looking For
           </h3>
-          <p className="text-lg text-text-secondary mb-8">
+          <p className="text-lg text-text-secondary">
             I partner with startups that are ready to make an impact. I'm looking for innovative solutions, strong leadership, and a clear path to scalability. If you're building something transformative, I'm here to help you protect and grow your vision.
           </p>
-          <button
-            onClick={scrollToContact}
-            className="bg-primary hover:bg-[#1BAE87] text-white px-8 py-3 rounded-md font-semibold 
-                     transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md"
-          >
-            Submit Your Pitch
-          </button>
         </div>
       </div>
     </section>
