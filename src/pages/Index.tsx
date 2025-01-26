@@ -1,7 +1,6 @@
 import { Hero } from "@/components/Hero";
 import { About } from "@/components/About";
 import { ContactForm } from "@/components/ContactForm";
-import { ApplicationProcess } from "@/components/ApplicationProcess";
 import { MultiStepContactForm } from "@/components/MultiStepContactForm";
 import { KVKKButton } from "@/components/KVKKButton";
 
@@ -10,7 +9,6 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Hero />
       <About />
-      <ApplicationProcess />
       <ContactForm />
       <MultiStepContactForm />
       <footer className="bg-white py-8">
